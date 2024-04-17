@@ -102,7 +102,7 @@ async function displayalbums() {
 
 async function main() {
     // getting list of all songs
-    await getsongs("songs/abc/")
+    await getsongs("songs/")
     playmusic(songs[0], true)
 
     // display all the albums on the page
@@ -153,7 +153,7 @@ async function main() {
         console.log("next clicked")
         let index = songs.indexOf(currentsong.src.split("/").slice(-1)[0])
         console.log(songs, index)
-        if (index + 1 <= length)
+        if (index + 1 <= songs.length)
             playmusic(songs[index + 1]);
     })
     // load the playlist whenever card is clicked
