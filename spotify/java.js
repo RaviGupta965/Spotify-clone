@@ -3,7 +3,7 @@ let songs;
 let currfolder;
 async function getsongs(folder) {
     currfolder = folder;
-    let a = await fetch(`http://127.0.0.1:5500/${folder}/`)
+    let a = await fetch(`/${folder}/`)
     let response = await a.text();
     let div = document.createElement("div")
     div.innerHTML = response;
@@ -33,11 +33,11 @@ async function getsongs(folder) {
     // attaching event listener
     Array.from(document.querySelector(".songlist").getElementsByTagName("li")).forEach(e => {
         e.addEventListener("click", element => {
-            playmusic(e.querySelector(".songinfo").firstElementChild.innerHTML)
+            playmusic(e.querySelector(".songinfo").firstElementChild.innerHTML.trim())
         })
     })
 
-
+    return songs;
 }
 let currentsong = new Audio();
 const playmusic = (track, pause = false) => {
@@ -62,7 +62,7 @@ function convertSecondsToMinutesAndSeconds(seconds) {
     return `${minutes}:${remainingSeconds}`;
 }
 async function displayalbums() {
-    let a = await fetch("http://127.0.0.1:5500/songs/")
+    let a = await fetch(`/songs/`)
     let response = await a.text();
     let div = document.createElement("div")
     div.innerHTML = response;
@@ -74,7 +74,7 @@ async function displayalbums() {
         if (e.href.includes("/songs/")) {
             let folder = e.href.split("/").slice(-2)[1]
             // set the metadata of folder
-            let a = await fetch(`http://127.0.0.1:5500/songs/${folder}/info.json`)
+            let a = await fetch(`/songs/${folder}/info.json`)
             let response = await a.json();
             console.log(response)
             cardcontainer.innerHTML = cardcontainer.innerHTML + `<div data-folder="${folder}" class="cards">
@@ -95,7 +95,7 @@ async function displayalbums() {
     Array.from(document.getElementsByClassName("cards")).forEach(e => {
         e.addEventListener("click", item => {
             songs = getsongs(`songs/${item.currentTarget.dataset.folder}`)
-
+            playmusic(songs[0])
         })
     })
 }
