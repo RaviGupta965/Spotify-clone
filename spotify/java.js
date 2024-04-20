@@ -1,6 +1,19 @@
 console.log("welcome to spotify clone")
+let currentsong = new Audio();
 let songs;
 let currfolder;
+function convertSecondsToMinutesAndSeconds(seconds) {
+    if (isNaN(seconds) || seconds < 0) {
+        return "00.00";
+    }
+    var minutes = Math.floor(seconds / 60);
+    var remainingSeconds = Math.floor(seconds % 60);
+    if (remainingSeconds < 10) {
+        remainingSeconds = "0" + remainingSeconds;
+    }
+    return `${minutes}:${remainingSeconds}`;
+}
+
 async function getsongs(folder) {
     currfolder = folder;
     let a = await fetch(`/${folder}/`)
@@ -15,7 +28,7 @@ async function getsongs(folder) {
             songs.push(element.href.split(`/${folder}/`)[1])
         }
     }
-
+// show all the songs in the playlist
     let songul = document.querySelector(".songlist").getElementsByTagName("ul")[0]
     songul.innerHTML = ""
     for (const song of songs) {
@@ -30,16 +43,16 @@ async function getsongs(folder) {
         </div>
         </li>`;
     }
-    // attaching event listener
+    // attaching event listener for each song
     Array.from(document.querySelector(".songlist").getElementsByTagName("li")).forEach(e => {
         e.addEventListener("click", element => {
             playmusic(e.querySelector(".songinfo").firstElementChild.innerHTML.trim())
         })
     })
 
-    return songs;
+    return songs
 }
-let currentsong = new Audio();
+
 const playmusic = (track, pause = false) => {
     currentsong.src = `/${currfolder}/` + track
     if (!pause) {
@@ -50,19 +63,8 @@ const playmusic = (track, pause = false) => {
     document.querySelector(".time").innerHTML = "00.00/00.00"
 }
 
-function convertSecondsToMinutesAndSeconds(seconds) {
-    if (isNaN(seconds) || seconds < 0) {
-        return "00.00";
-    }
-    var minutes = Math.floor(seconds / 60);
-    var remainingSeconds = Math.floor(seconds % 60);
-    if (remainingSeconds < 10) {
-        remainingSeconds = "0" + remainingSeconds;
-    }
-    return `${minutes}:${remainingSeconds}`;
-}
 async function displayalbums() {
-    let a = await fetch(`/songs/`)
+    let a = await fetch(`songs/`)
     let response = await a.text();
     let div = document.createElement("div")
     div.innerHTML = response;
@@ -71,10 +73,10 @@ async function displayalbums() {
     let array=Array.from(anchor)
         for (let index = 0; index < array.length; index++) {
             const e = array[index];
-        if (e.href.includes("/songs")) {
-            let folder = e.href.split("/").slice(-2)[1]
+        if (e.href.includes("songs/")) {
+            let folder = e.href.split("songs/").slice(-2)[1]
             // set the metadata of folder
-            let a = await fetch(`/songs/${folder}/info.json`)
+            let a = await fetch(`songs/${folder}/info.json`)
             let response = await a.json();
             console.log(response)
             cardcontainer.innerHTML = cardcontainer.innerHTML + `<div data-folder="${folder}" class="cards">
